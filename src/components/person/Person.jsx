@@ -1,41 +1,84 @@
-import styling from "./Person.module.scss"
-import axios from "axios"
-import spinner from "../../assets/spinner.svg"
-import { useState,useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import styling from "./Person.module.scss";
+import spinner from "../../assets/spinner.svg";
+import SvgContainer from "./components/svg-container/SvgContainer";
+import ButtonTable from "./components/ButtonContainer/ButtonTable"
 
 const url = "https://randomuser.me/api/";
 
 const Person = () => {
-  const [text1, setText1] = useState("My name is ")
-  const [text2, setText2] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [fetchPerson, setFetchPerson] = useState({});
+  const [text1, setText1] = useState("My name is");
+  const [text2, setText2] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const PersonInfo = async() =>{
-    setLoading(true)
+  console.log(fetchPerson);
+
+  const ApiFetcher = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(url)
-      const person = response.data.results[0]
-      console.log(person);
-    } catch (error) {
-      console.log(error);
+      const response = await axios.get(url);
+      const person = response.data.results[0];
+      const {
+        email,
+        phone,
+        gender,
+        dob: { age },
+        picture: { large: image },
+        name: { title, first: name, last: surname },
+        location: { country },
+        login: { password },
+      } = person;
+      const fullname = `${title} ${name} ${surname}`;
+      const personData = {
+        email,
+        gender,
+        fullname,
+        image,
+        age,
+        phone,
+        country,
+        password,
+      };
+      setFetchPerson(personData);
+      setText2(personData.fullname);
+    } catch (e) {
+      console.log(e);
     }
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
-  useEffect(() => {  
-    PersonInfo()
-  }, [])
-  
+  useEffect(() => {
+    ApiFetcher();
+  }, []);
+
   return (
     <div className={styling.card}>
-      <nav className={styling.navbar}>
-      <div>
-
+      <nav className={styling.navbar}></nav>
+      <div className={styling.container}>
+        {loading ? (
+          <img
+            src={spinner}
+            alt="spinner-loading"
+            className={styling.spinner}
+          />
+        ) : (
+          <>
+            <img
+              src={fetchPerson.image}
+              alt="user_picture"
+              className={styling.image}
+            />
+            <div className={styling.text1}>{text1}</div>
+            <div className={styling.text2}>{text2}</div>
+          </>
+        )}
       </div>
-      </nav>
-
+      <SvgContainer fetchPerson={fetchPerson} setText1={setText1} setText2={setText2}/>
+      <ButtonTable />
     </div>
-  )
-}
+  );
+};
 
-export default Person
+export default Person;

@@ -1,15 +1,14 @@
-
 import './App.css';
-import Footer from './components/footer/Footer';
+import Footer from "./components/footer/Footer"
 import Navbar from './components/navbar/Navbar';
-import Person from './components/person/Person';
+import PersonInfo from "./components/PersonInfo/PersonInfo"
 
 function App() {
   return (
     <div className="App">
-      <Navbar />
-      <Person />
-      <Footer />
+      <Navbar/>
+      <PersonInfo/>
+      <Footer/>
     </div>
   );
 }
